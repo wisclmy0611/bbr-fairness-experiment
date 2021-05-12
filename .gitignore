@@ -1,0 +1,6 @@
+*.swp
+
+*.pyc
+build/
+waflib/
+.lock-waf_linux2_build
