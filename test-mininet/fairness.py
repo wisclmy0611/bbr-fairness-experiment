@@ -30,13 +30,13 @@ class FairnessTopo(Topo):
 def start_iperf3_server(net, i, port):
     print(f'Starting iperf3 server {i} on port {port}')
     h2 = net.get('h2')
-    h2.popen(f'iperf3 -s -p {port} --forceflush > {args.dir}/iperf3_server_{i}.log 2>&1', shell=True)
+    h2.popen(f'iperf3 -s -p {port} -i 0.1 --forceflush > {args.dir}/iperf3_server_{i}.log 2>&1', shell=True)
 
 def start_iperf3_client(net, cong, i, server_port):
     print(f'Starting iperf3 client {cong}_{i} connecting to port {server_port}')
     h1 = net.get('h1')
     h2 = net.get('h2')
-    h1.popen(f'iperf3 -c {h2.IP()} -p {server_port} -w 16m -t {args.time} -C {cong} --forceflush > {args.dir}/iperf3_client_{cong}_{i}.log 2>&1', shell=True)
+    h1.popen(f'iperf3 -c {h2.IP()} -p {server_port} -w 16m -t {args.time} -C {cong} -i 0.1 --forceflush > {args.dir}/iperf3_client_{cong}_{i}.log 2>&1', shell=True)
 
 def main():
     parser = argparse.ArgumentParser(description='BBR Fairness Experiment')
