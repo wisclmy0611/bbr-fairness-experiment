@@ -23,7 +23,7 @@ class FairnessTopo(Topo):
             self.addHost('h2')
         ]
         switch = self.addSwitch('s0')
-        delay = args.rtt / 4
+        delay = str(args.rtt / 4) + 'ms'
         self.addLink(hosts[0], switch, bw=args.bw_host, delay=delay, max_queue_size=args.maxq)
         self.addLink(hosts[1], switch, bw=args.bw_net, delay=delay, max_queue_size=args.maxq)
 
