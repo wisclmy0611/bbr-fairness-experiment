@@ -11,3 +11,11 @@ for bdp in "${bdp[@]}"; do
     echo "Running reno experiment with queue size of $maxq ($bdp bdp)"
     python fairness.py --bw-host=$bw --bw-net=$bw --rtt=$rtt --maxq=$maxq --bbr=1 --reno=1 --cubic=0 --dir=./outputs/1b/reno/bdp$bdp --time=$time
 done
+
+for bdp in "${bdp[@]}"; do
+    maxq=$(python -c "print(round($rtt / 1000 * $bw * 1000 * 1000 / 8 / 1500 * $bdp))")
+    echo "Running cubic experiment with queue size of $maxq ($bdp bdp)"
+    python fairness.py --bw-host=$bw --bw-net=$bw --rtt=$rtt --maxq=$maxq --bbr=1 --reno=0 --cubic=1 --dir=./outputs/1b/cubic/bdp$bdp --time=$time
+done
+
+python plotter_1b.py

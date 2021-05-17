@@ -33,6 +33,7 @@ def get_throughputs(experiment, cong, input_dir):
     return throughputs
 
 def plot(data1, cong1, data2, cong2, output):
+    plt.cla()
     plt.plot(range(len(bdp)), data1, marker='o', label=cong1, color='tab:orange')
     plt.plot(range(len(bdp)), data2, marker='o', label=cong2, color='tab:blue')
     plt.xticks(range(len(bdp)), bdp)
@@ -53,7 +54,9 @@ def main():
     plot(reno_throughputs, 'reno', bbr_throughputs, 'bbr', f'{args.output}/1b_reno.png')
 
     # Cubic and BBR
-    
+    cubic_throughputs = get_throughputs('cubic', 'cubic', args.input_dir)
+    bbr_throughputs = get_throughputs('cubic', 'bbr', args.input_dir)
+    plot(cubic_throughputs, 'cubic', bbr_throughputs, 'bbr', f'{args.output}/1b_cubic.png')
 
 if __name__ == '__main__':
     main()
