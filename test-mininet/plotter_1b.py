@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
+from os import linesep
 import re
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,26 +12,38 @@ regex = re.compile(REGEX)
 
 # Different queue size experiments based on BDP
 bdp = [0.25, 0.5, 1, 2, 4, 8, 16, 32, 64, 128]
+iteration = range(1,6)
 
 def get_throughputs(experiment, cong, input_dir):
-    throughputs = []
-    for cur_bdp in bdp:
-        with open(f'{input_dir}/{experiment}/bdp{cur_bdp}/iperf3_client_{cong}_0.log') as f:
-            line = f.readlines()[-2]
+    sum_throughputs = [0 for _ in range(len(bdp))]
+    for cur_iteration in iteration:
+        
+        throughputs = []
+        for cur_bdp in bdp:
             
-            result = regex.search(line)
-            bw = float(result[2])
-            unit = result[3]
+            print (f'Reading {input_dir}/{experiment}/iteration{cur_iteration}/bdp{cur_bdp}/iperf3_client_{cong}_0.log')
+            with open(f'{input_dir}/{experiment}/iteration{cur_iteration}/bdp{cur_bdp}/iperf3_client_{cong}_0.log') as f:
+                lines = f.readlines()
+                
+                result = regex.search(lines[-2])
+                if result is None:
+                    result = regex.search(lines[-4])
 
-            if unit == 'Kbits':
-                bw /= 1000
-            elif unit == 'bits':
-                bw /= 1000000
+                bw = float(result[2])
+                unit = result[3]
 
-            throughputs.append(bw)
-            print(line)
-    print(throughputs)
-    return throughputs
+                if unit == 'Kbits':
+                    bw /= 1000
+                elif unit == 'bits':
+                    bw /= 1000000
+
+                throughputs.append(bw)
+        print(throughputs)
+        sum_throughputs = [x + y for x, y in zip(sum_throughputs, throughputs)]
+
+    avg_throughput = [x / len(iteration) for x in sum_throughputs]
+    print (f'avg {avg_throughput}')
+    return avg_throughput
 
 def plot(data1, cong1, data2, cong2, output):
     plt.cla()
