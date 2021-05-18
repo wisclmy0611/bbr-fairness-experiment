@@ -6,13 +6,16 @@ import re
 import matplotlib.pyplot as plt
 import numpy as np
 
+
+# Different queue size experiments based on BDP
+bdp = [0.25, 0.5, 1, 2, 4, 8, 16, 32, 64, 128]
+iteration = range(1,2)
+
+
 # Extract time and bandwidth from log
 REGEX = r'(\d+\.\d+)-\d+\.\d+ +sec +\d+\.*\d* \w+ +(\d+\.*\d*) (\w+)/sec'
 regex = re.compile(REGEX)
 
-# Different queue size experiments based on BDP
-bdp = [0.25, 0.5, 1, 2, 4, 8, 16, 32, 64, 128]
-iteration = range(1,6)
 
 def get_throughputs(experiment, cong, input_dir):
     sum_throughputs = [0 for _ in range(len(bdp))]
