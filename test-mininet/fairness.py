@@ -9,9 +9,7 @@ from mininet.topo import Topo
 from mininet.node import CPULimitedHost
 from mininet.link import TCLink
 from mininet.net import Mininet
-from mininet.log import lg, info
 from mininet.util import dumpNodeConnections
-from mininet.cli import CLI
 from mininet.clean import cleanup
 
 IPERF3_BASE_PORT = 10000
