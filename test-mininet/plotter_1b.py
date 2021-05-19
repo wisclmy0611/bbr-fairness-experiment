@@ -1,46 +1,41 @@
 #!/usr/bin/env python
 
 import argparse
-from os import linesep
-import re
 import matplotlib.pyplot as plt
-import numpy as np
-
+import re
 
 # Different queue size experiments based on BDP
 bdp = [0.25, 0.5, 1, 2, 4, 8, 16, 32, 64, 128]
-iteration = range(1,2)
+iteration = range(1, 7)
 
-
-# Extract time and bandwidth from log
-REGEX = r'(\d+\.\d+)-\d+\.\d+ +sec +\d+\.*\d* \w+ +(\d+\.*\d*) (\w+)/sec'
+# Extract average bandwidth from log
+REGEX = r'\d+\.\d+-\d+\.\d+ +sec +\d+\.*\d* \w+ +(\d+\.*\d*) (\w+)/sec +receiver'
 regex = re.compile(REGEX)
 
-
 def get_throughputs(experiment, cong, input_dir):
-    sum_throughputs = [0 for _ in range(len(bdp))]
+    server_id = 0 if cong == 'bbr' else 1
+    sum_throughputs = [0] * len(bdp)
     for cur_iteration in iteration:
         
         throughputs = []
         for cur_bdp in bdp:
             
-            print (f'Reading {input_dir}/{experiment}/iteration{cur_iteration}/bdp{cur_bdp}/iperf3_client_{cong}_0.log')
-            with open(f'{input_dir}/{experiment}/iteration{cur_iteration}/bdp{cur_bdp}/iperf3_client_{cong}_0.log') as f:
+            filename = f'{input_dir}/{experiment}/iteration_{cur_iteration}/bdp_{cur_bdp}/iperf3_server_{server_id}.log'
+            print(f'Reading {filename}')
+            with open(filename) as f:
                 lines = f.readlines()
                 
-                result = regex.search(lines[-2])
-                if result is None:
-                    result = regex.search(lines[-4])
+            result = regex.search(lines[-1])
 
-                bw = float(result[2])
-                unit = result[3]
+            bw = float(result[1])
+            unit = result[2]
 
-                if unit == 'Kbits':
-                    bw /= 1000
-                elif unit == 'bits':
-                    bw /= 1000000
+            if unit == 'Kbits':
+                bw /= 1000
+            elif unit == 'bits':
+                bw /= 1000000
 
-                throughputs.append(bw)
+            throughputs.append(bw)
         print(throughputs)
         sum_throughputs = [x + y for x, y in zip(sum_throughputs, throughputs)]
 
