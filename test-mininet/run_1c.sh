@@ -1,8 +1,13 @@
 #!/bin/bash
 set -e
 
-python fairness.py --bw-host=1000 --bw-net=10 --rtt=40 --maxq=1000 --bbr=1 --reno=0 --cubic=16 --dir=./outputs/1c --time=300
+./setup_env.sh
+rm -rf outputs/1c*
+
+python fairness.py --dir=./outputs/1c
 for f in $(ls outputs/1c/iperf3_server_*.log); do
     python iperf3_log_parser.py < "$f" > "$f.raw"
 done
-    python plotter_1c.py --ma-width=100 --input-dir=./outputs/1c --output=./outputs/1c.png
+python plotter_1c.py
+
+chown -R mininet:mininet outputs

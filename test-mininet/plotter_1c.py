@@ -22,7 +22,7 @@ def get_data(filename):
 
 def main():
     parser = argparse.ArgumentParser(description='BBR Fairness Experiment Plotter')
-    parser.add_argument('--ma-width', type=int, help='Moving average width', default=50)
+    parser.add_argument('--ma-width', type=int, help='Moving average width', default=100)
     parser.add_argument('--input-dir', type=str, help='Data input path', default='./outputs/1c')
     parser.add_argument('--output', type=str, help='Plot output path', default='./outputs/1c.png')
     args = parser.parse_args()
@@ -31,7 +31,7 @@ def main():
     x1, y1 = get_data(f'{args.input_dir}/iperf3_server_0.log.raw')
     x1 = moving_average(x1, args.ma_width)
     y1 = moving_average(y1, args.ma_width)
-    plt.plot(x1, y1)
+    plt.plot(x1, y1, label='1 BBR flow', color='tab:blue')
 
     # Cubics
     x2 = []
@@ -47,7 +47,11 @@ def main():
     y2 = np.array(y2).sum(axis=0)
     x2 = moving_average(x2, args.ma_width)
     y2 = moving_average(y2, args.ma_width)
-    plt.plot(x2, y2)
+    plt.plot(x2, y2, label='Sum of 16 Cubic flows', color='tab:orange')
+
+    plt.xlabel('Time (s)')
+    plt.ylabel('Goodput (Mbps)')
+    plt.legend()
 
     plt.savefig(args.output)
 
