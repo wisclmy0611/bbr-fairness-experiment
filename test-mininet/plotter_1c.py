@@ -22,7 +22,7 @@ def get_data(filename):
 
 def main():
     parser = argparse.ArgumentParser(description='BBR Fairness Experiment Plotter')
-    parser.add_argument('--ma-width', type=int, help='Moving average width', default=100)
+    parser.add_argument('--ma-width', type=int, help='Moving average width', default=20)
     parser.add_argument('--input-dir', type=str, help='Data input path', default='./outputs/1c')
     parser.add_argument('--output', type=str, help='Plot output path', default='./outputs/1c.png')
     args = parser.parse_args()

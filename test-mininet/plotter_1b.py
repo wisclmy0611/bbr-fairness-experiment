@@ -26,6 +26,8 @@ def get_throughputs(experiment, cong, input_dir):
                 lines = f.readlines()
                 
             result = regex.search(lines[-1])
+            if result is None:
+                result = regex.search(lines[-5])
 
             bw = float(result[1])
             unit = result[2]

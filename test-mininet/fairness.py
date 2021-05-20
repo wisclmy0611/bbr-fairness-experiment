@@ -38,7 +38,7 @@ def start_iperf3_client(net, cong, i, server_port):
     print(f'Starting iperf3 client {cong}_{i} connecting to port {server_port}')
     h1 = net.get('h1')
     h2 = net.get('h2')
-    h1.popen(f'iperf3 -c {h2.IP()} -p {server_port} -t {args.time} -C {cong} -i 0.1 --forceflush > {args.dir}/iperf3_client_{cong}_{i}.log 2>&1', shell=True)
+    h1.popen(f'iperf3 -c {h2.IP()} -p {server_port} -t {args.time} -C {cong} -w 16m -i 0.1 --forceflush > {args.dir}/iperf3_client_{cong}_{i}.log 2>&1', shell=True)
 
 def main():
     parser = argparse.ArgumentParser(description='BBR Fairness Experiment')
@@ -55,6 +55,7 @@ def main():
     parser.add_argument('--cubic', type=int, help='Number of Cubic connections', default=16)
 
     # Experiment configurations
+    parser.add_argument('--delay-bbr-others', type=float, help='Delay between initiating BBR and other connections in seconds', default=0)
     parser.add_argument('--dir', type=str, help='Directory to store outputs', default='./outputs')
     parser.add_argument('--time', type=int, help='Duration to run the experiment in seconds', default=300)
 
@@ -83,6 +84,8 @@ def main():
     time.sleep(1)
     for i in range(args.bbr):
         start_iperf3_client(net, 'bbr', i, bbr_base_port + i)
+    if args.delay_bbr_others > 0:
+        time.sleep(args.delay_bbr_others)
     for i in range(args.reno):
         start_iperf3_client(net, 'reno', i, reno_base_port + i)
     for i in range(args.cubic):
