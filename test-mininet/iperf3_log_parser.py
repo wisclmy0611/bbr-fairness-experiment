@@ -30,7 +30,6 @@ def main():
 
             if t <= last_t:
                 # Average
-                print(f'Avg: {bw}')
                 break
             last_t = t
 

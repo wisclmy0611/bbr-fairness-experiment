@@ -11,7 +11,7 @@ def moving_average(x, w):
 
 def get_data(filename):
     with open(filename) as f:
-        lines = f.readlines()[:-1]
+        lines = f.readlines()
     x = []
     y = []
     for line in lines:
