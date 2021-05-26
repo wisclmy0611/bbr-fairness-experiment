@@ -25,24 +25,27 @@ def model(bw, rtt, time, bbr, bdp):
     ret = model_raw(N, q, c, l, X, d)
     return 1 if ret > 1 else ret
 
-def get_data_single(bw, bbr, input_dir):
+def get_data_single(bbr, input_dir):
     data = []
-    for i in range(bbr):
+    for i in range(bbr + 1):
         with open(f'{input_dir}/iperf3_server_{i}.log.raw') as f:
             lines = f.readlines()
         data.append([float(line.split()[1]) for line in lines])
     max_l = max(len(y) for y in data)
     for y in data:
         y.extend([0] * (max_l - len(y)))
-    data = np.array(data).sum(axis=0)
+    data = np.array(data)
+    total = data.sum(axis=0)
+    data = data[:-1].sum(axis=0)
+    total = np.average(total[-args.avg_width:])
     data = np.average(data[-args.avg_width:])
-    return data / bw
+    return data / total
 
-def get_data(bw, bbr, bdps, input_dir):
-    return [get_data_single(bw, bbr, f'{input_dir}/bdp_{bdp}') for bdp in bdps]
+def get_data(bbr, bdps, input_dir):
+    return [get_data_single(bbr, f'{input_dir}/bdp_{bdp}') for bdp in bdps]
 
 def plot_subfigure(bw, rtt, time, bbr, bdps, input_dir, output):
-    actual = get_data(bw, bbr, bdps, input_dir)
+    actual = get_data(bbr, bdps, input_dir)
     model_output = [model(bw, rtt, time, bbr, bdp) for bdp in bdps]
     plt.cla()
     plt.plot(range(len(bdps)), actual, marker='o', label='Actual', color='tab:blue')
