@@ -84,7 +84,7 @@ def plot_8c():
 
 def main():
     parser = argparse.ArgumentParser(description='BBR Fairness Experiment Plotter')
-    parser.add_argument('--avg-width', type=int, help='Average width', default=200)
+    parser.add_argument('--avg-width', type=int, help='Average width', default=300)
     parser.add_argument('--input-dir', type=str, help='Data input path', default='./outputs/8')
     parser.add_argument('--output', type=str, help='Plot output path', default='./outputs')
     global args
